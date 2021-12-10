@@ -1,0 +1,13 @@
+eclipse.preferences.version=1
+encoding//src/application/Config.java=UTF-8
+encoding//src/controller/PlaceOrderController.java=UTF-8
+encoding//src/controller/PlaceRushOrderController.java=UTF-8
+encoding//src/entity/media/Media.java=UTF-8
+encoding//src/entity/order/Order.java=UTF-8
+encoding//src/utils/Configs.java=UTF-8
+encoding//src/views/screen/cart/CartScreenHandler.java=UTF-8
+encoding//src/views/screen/invoice/MediaInvoiceScreenHandler.java=UTF-8
+encoding//src/views/screen/shipping/ShippingScreenHandler.java=UTF-8
+encoding//src/views/screen/shipping_rush_order/copy/ShippingRushOrderScreenHandler.java=UTF-8
+encoding//test/controller/ValidateDateTest.java=UTF-8
+encoding//test/controller/ValidateProvinceTest.java=UTF-8
