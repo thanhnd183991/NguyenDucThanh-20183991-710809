@@ -5,6 +5,10 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * @author ADMIN
+ *
+ */
 public class DVD extends Media {
 
     String discType;
@@ -134,8 +138,11 @@ public class DVD extends Media {
         }
     }
 
-    @Override
-    public List getAllMedia() {
-        return null;
-    }
+    /**
+     * xóa phương thức getAllMedia ở lớp DVD con
+     */
+//    @Override
+//    public List getAllMedia() {
+//        return null;
+//    }
 }

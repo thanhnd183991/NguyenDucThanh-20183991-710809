@@ -26,7 +26,7 @@ import utils.Utils;
 import views.screen.BaseScreenHandler;
 import views.screen.popup.PopupScreen;
 import views.screen.shipping.ShippingScreenHandler;
-import views.screen.shipping_rush_order.copy.ShippingRushOrderScreenHandler;
+import views.screen.shipping_rush_order.ShippingRushOrderScreenHandler;
 
 
 public class CartScreenHandler extends BaseScreenHandler {

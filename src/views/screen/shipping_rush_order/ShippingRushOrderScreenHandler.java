@@ -1,4 +1,4 @@
-package views.screen.shipping_rush_order.copy;
+package views.screen.shipping_rush_order;
 
 import java.io.IOException;
 import java.net.URL;
@@ -16,6 +16,7 @@ import entity.cart.Cart;
 import entity.cart.CartMedia;
 import entity.invoice.Invoice;
 import entity.order.Order;
+import entity.order.OrderMedia;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.event.ActionEvent;
@@ -42,7 +43,7 @@ import views.screen.shipping.ShippingScreenHandler;
 public class ShippingRushOrderScreenHandler extends ShippingScreenHandler implements Initializable {
 
 	/**
-	 * cho chọn ngày giao hàng nhanh
+	 * cho ch�?n ngày giao hàng nhanh
 	 */
 	@FXML
 	private DatePicker datePicker;
@@ -54,32 +55,33 @@ public class ShippingRushOrderScreenHandler extends ShippingScreenHandler implem
 	private VBox areaPlaceRushOrderVBox;
 
 	/**
-	 *  hiển thị diện tích mật hàng hỗ trợ giao hàng nhanh
+	 * hiển thị diện tích mật hàng hỗ trợ giao hàng nhanh
 	 */
 	@FXML
 	private VBox itemRushOrderVBox;
 
 	/**
-	 *  hiển thị diện tích mật hàng không hỗ trợ giao hàng nhanh
+	 * hiển thị diện tích mật hàng không hỗ trợ giao hàng nhanh
 	 */
 	@FXML
 	private VBox itemNoRushOrderVBox;
 
 	/**
-	 *  hiển thị thông tin tổng giá trị sản phẩm đã tính thuế VAT nhưng chưa tính thuế vận chuyển
+	 * hiển thị thông tin tổng giá trị sản phẩm đã tính thuế VAT nhưng chưa tính
+	 * thuế vận chuyển
 	 */
 	@FXML
 	private Label subTotalLabel;
 
-	private HashMap<String, String> messages;
-	private String dateHashMap = "";
+	private HashMap<String, String> messages = new HashMap<String, String>();
 
 	public ShippingRushOrderScreenHandler(Stage stage, String screenPath, Order order) throws IOException {
 		super(stage, screenPath, order);
 	}
 
 	/**
-	 * khởi tạo mặc định là diện tích giao hàng nhanh là false và rushOrderRadioButton là false
+	 * khởi tạo mặc định là diện tích giao hàng nhanh là false và
+	 * rushOrderRadioButton là false
 	 */
 	@Override
 	public void initialize(URL arg0, ResourceBundle arg1) {
@@ -89,12 +91,10 @@ public class ShippingRushOrderScreenHandler extends ShippingScreenHandler implem
 	}
 
 	/**
-	 * nếu không giao hàng nhanh thì gọi lại phương thức được kết thừa
-	 * nếu giao hàng nhanh thì
-	 * 	- Thêm trường date vào deliveryInfo của order
-	 * 	- Xác thực thông tin giao hàng nhanh
-	 * 	- Tính toán chi phí giao hàng nhanh
-	 * 	- Tạo ra invoice cho giao hàng nhanh
+	 * nếu không giao hàng nhanh thì g�?i lại phương thức được kết thừa nếu giao
+	 * hàng nhanh thì - Thêm trư�?ng date vào deliveryInfo của order - Xác thực
+	 * thông tin giao hàng nhanh - Tính toán chi phí giao hàng nhanh - Tạo ra
+	 * invoice cho giao hàng nhanh
 	 */
 	@FXML
 	public void submitDeliveryInfo(MouseEvent event) throws IOException, InterruptedException, SQLException {
@@ -102,13 +102,12 @@ public class ShippingRushOrderScreenHandler extends ShippingScreenHandler implem
 		if (rushOrderRadioButton.isSelected() == false) {
 			super.submitDeliveryInfo(event);
 		} else {
-			messages = addInfoToMessages();
-			messages.put("date", dateHashMap);
 
 			// process and validate delivery info
 			try {
-				if (this.rushOrderRadioButton.isSelected() && dateHashMap.equals("")) {
-					PopupScreen.error("Điền ngày giao hàng nhanh");
+				if (this.rushOrderRadioButton.isSelected()
+						&& (datePicker.getValue() == null || datePicker.getValue().equals(""))) {
+					PopupScreen.error("Chọn ngày giao hàng nhanh");
 					return;
 				}
 				getBController().processRushOrderDeliveryInfo(messages);
@@ -132,6 +131,7 @@ public class ShippingRushOrderScreenHandler extends ShippingScreenHandler implem
 
 	/**
 	 * xử lý sự kiển khi tỉnh thay đổi
+	 * 
 	 * @param e
 	 * @throws IOException
 	 */
@@ -144,27 +144,36 @@ public class ShippingRushOrderScreenHandler extends ShippingScreenHandler implem
 	}
 
 	/**
-	 *	Xử lý sự kiện khi ngày giao hàng thay đổi
+	 * Xử lý sự kiện khi ngày giao hàng thay đổi
+	 * 
 	 * @param e
 	 */
 	public void getDate(ActionEvent e) {
 		if (datePicker != null) {
 			LocalDate myDate = datePicker.getValue();
-			dateHashMap = myDate.toString();
+			messages.put("date", myDate.toString());
 		}
 	}
 
 	/**
 	 * Xử lý sự kiện khi rushOrderRadioButton thay đổi
+	 * 
 	 * @param e
 	 * @throws IOException
+	 * @throws SQLException
+	 * @throws InterruptedException
 	 */
-	public void isCheckPlaceRushOrder(ActionEvent e) throws IOException {
+	public void isCheckPlaceRushOrder(ActionEvent e) throws IOException, SQLException, InterruptedException {
 		if (this.rushOrderRadioButton.isSelected() && this.province != null && this.province.getValue() != null) {
 			if (this.province.getValue().equals("Hà Nội")) {
 				this.areaPlaceRushOrderVBox.setVisible(true);
-				displayAreaPlaceRushOrder();
 				subTotalLabel.setText(Utils.getCurrencyFormat(order.getAmount()));
+
+				messages = addInfoToMessages();
+				if (datePicker.getValue() != null)
+					messages.put("date", datePicker.getValue().toString());
+				order.setDeliveryInfo(messages);
+				displayAreaPlaceRushOrder();
 			} else {
 				this.rushOrderRadioButton.setSelected(false);
 				this.areaPlaceRushOrderVBox.setVisible(false);
@@ -177,30 +186,33 @@ public class ShippingRushOrderScreenHandler extends ShippingScreenHandler implem
 	}
 
 	/**
-	 *  hiển thị giao diện giao nhanh
-	 * @throws IOException 
+	 * hiển thị giao diện giao nhanh
+	 * 
+	 * @throws IOException
+	 * @throws SQLException
 	 */
-	public void displayAreaPlaceRushOrder() throws IOException {
+	public void displayAreaPlaceRushOrder() throws IOException, SQLException {
 		displaySupportMediaPlaceRushOrder();
 		calculateShippingFees();
 	}
 
 	/**
-	 *  tính toán chi phí giao nhanh
+	 * tính toán chi phí giao nhanh
 	 */
 	public void calculateShippingFees() {
 		// calculate shipping fees
+
 		int shippingFees = getBController().calculateShippingRushOrderFee(order);
 		order.setShippingFees(shippingFees);
-		order.setDeliveryInfo(messages);
 	}
-
 
 	/**
 	 * tính toán các mặt hàng giao nhanh nếu không có in ra thông báo
+	 * 
 	 * @throws IOException
+	 * @throws SQLException
 	 */
-	public void displaySupportMediaPlaceRushOrder() throws IOException {
+	public void displaySupportMediaPlaceRushOrder() throws IOException, SQLException {
 //	 ArrayList<CartMedia> mediaItems = this.getBController().getSupportMedias();
 		itemRushOrderVBox.getChildren().clear();
 		itemNoRushOrderVBox.getChildren().clear();
@@ -218,41 +230,36 @@ public class ShippingRushOrderScreenHandler extends ShippingScreenHandler implem
 
 		drawLabel2.setText("Không hỗ trợ");
 		itemNoRushOrderVBox.getChildren().add(drawLabel2);
-		for (int i = 0; i < Cart.getCart().getListMedia().size(); i++) {
-			CartMedia cartMedia = (CartMedia) Cart.getCart().getListMedia().get(i);
-			String append = cartMedia.getMedia().getTitle() + "(" + cartMedia.getQuantity() + "):  "
-					+ Utils.getCurrencyFormat(cartMedia.getPrice() * cartMedia.getQuantity());
+		for (int i = 0; i < order.getlstOrderMedia().size(); i++) {
+			OrderMedia orderMedia = (OrderMedia) order.getlstOrderMedia().get(i);
+			String append = orderMedia.getMedia().getTitle() + "(" + orderMedia.getQuantity() + "):  "
+					+ Utils.getCurrencyFormat(orderMedia.getMedia().getPrice() * orderMedia.getQuantity());
 
 			Label tmp = new Label(append);
 			tmp.setFont(new Font("System", 16));
-			if (cartMedia.getMedia().getIsSupport()) {
-				totalItemRushOrder++;
+			if (orderMedia.getMedia().getIsSupport()) {
+				totalItemRushOrder += orderMedia.getQuantity();
 				itemRushOrderVBox.getChildren().add(tmp);
 			} else {
-				totalItemNoRushOrder++;
+				totalItemNoRushOrder += orderMedia.getQuantity();
 				itemNoRushOrderVBox.getChildren().add(tmp);
 			}
 		}
-		if(totalItemRushOrder == 0) {
+		if (totalItemRushOrder == 0) {
 			this.areaPlaceRushOrderVBox.setVisible(false);
 			this.rushOrderRadioButton.setSelected(false);
 			PopupScreen.error("Xin lỗi không có sản phẩm nào giao nhanh");
-		}
-		else {
-		Label totalItemRushOrderLabel = new Label("Tổng: " + String.valueOf(totalItemRushOrder));
-		totalItemRushOrderLabel.setFont(new Font("System", 16));
-		totalItemRushOrderLabel.setStyle("-fx-font-weight: bold");
-		itemRushOrderVBox.getChildren().add(totalItemRushOrderLabel);
+		} else {
+			Label totalItemRushOrderLabel = new Label("Tổng: " + String.valueOf(totalItemRushOrder));
+			totalItemRushOrderLabel.setFont(new Font("System", 16));
+			totalItemRushOrderLabel.setStyle("-fx-font-weight: bold");
+			itemRushOrderVBox.getChildren().add(totalItemRushOrderLabel);
 
-		Label totalItemNoRushOrderLabel = new Label("Tổng: " + String.valueOf(totalItemNoRushOrder));
-		totalItemNoRushOrderLabel.setFont(new Font("System", 16));
-		totalItemNoRushOrderLabel.setStyle("-fx-font-weight: bold");
-		itemNoRushOrderVBox.getChildren().add(totalItemNoRushOrderLabel);
+			Label totalItemNoRushOrderLabel = new Label("Tổng: " + String.valueOf(totalItemNoRushOrder));
+			totalItemNoRushOrderLabel.setFont(new Font("System", 16));
+			totalItemNoRushOrderLabel.setStyle("-fx-font-weight: bold");
+			itemNoRushOrderVBox.getChildren().add(totalItemNoRushOrderLabel);
 		}
-	}
-
-	public void notifyError() {
-		// TODO: implement later on if we need
 	}
 
 }

@@ -72,6 +72,7 @@ public class InvoiceScreenHandler extends BaseScreenHandler {
 
 	private void setInvoiceInfo() {
 		HashMap<String, String> deliveryInfo = invoice.getOrder().getDeliveryInfo();
+//		System.out.println("Invoice Screen: " + deliveryInfo.toString());
 		name.setText(deliveryInfo.get("name"));
 		province.setText(deliveryInfo.get("province"));
 		instructions.setText(deliveryInfo.get("instructions"));

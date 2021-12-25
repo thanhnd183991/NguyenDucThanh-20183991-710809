@@ -7,6 +7,7 @@ import controller.PaymentController;
 import entity.cart.Cart;
 import common.exception.PlaceOrderException;
 import entity.invoice.Invoice;
+import entity.payment.PaymentTransaction;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -65,10 +66,9 @@ public class PaymentScreenHandler extends BaseScreenHandler {
 	void confirmToPayOrder() throws IOException{
 		String contents = "pay order";
 		PaymentController ctrl = (PaymentController) getBController();
-		Map<String, String> response = ctrl.payOrder(invoice.getAmount(), contents, cardNumber.getText(), holderName.getText(),
+		PaymentTransaction response = ctrl.payOrder(invoice.getAmount(), contents, cardNumber.getText(), holderName.getText(),
 				expirationDate.getText(), securityCode.getText());
-		System.out.println("invoice" + invoice.getAmount());
-		BaseScreenHandler resultScreen = new ResultScreenHandler(this.stage, Configs.RESULT_SCREEN_PATH, response.get("RESULT"), response.get("MESSAGE") );
+		BaseScreenHandler resultScreen = new ResultScreenHandler(this.stage, Configs.RESULT_SCREEN_PATH, response);
 		resultScreen.setPreviousScreen(this);
 		resultScreen.setHomeScreenHandler(homeScreenHandler);
 		resultScreen.setScreenTitle("Result Screen");

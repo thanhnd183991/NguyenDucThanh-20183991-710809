@@ -54,6 +54,7 @@ public class API {
 	 * @throws IOException
 	 */
 	public static String post(String url, String data) throws IOException {
+		System.out.println("data " + data);
 		//cho phep PATCH protocol
 		allowMethods("PATCH");
 		
@@ -135,6 +136,7 @@ public class API {
 		response.append(inputLine + "\n");
 		in.close();
 		LOGGER.info("Respone Info: " + response.toString());
+//		System.out.println("my" + response.toString());
 		return response.substring(0, response.length() - 1).toString();
 	}
 }

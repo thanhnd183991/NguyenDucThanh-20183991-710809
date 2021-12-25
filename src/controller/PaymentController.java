@@ -9,6 +9,7 @@ import common.exception.PaymentException;
 import common.exception.UnrecognizedException;
 import entity.cart.Cart;
 import entity.payment.CreditCard;
+import entity.payment.PaymentCard;
 import entity.payment.PaymentTransaction;
 import subsystem.InterbankInterface;
 import subsystem.InterbankSubsystem;
@@ -80,24 +81,54 @@ public class PaymentController extends BaseController {
 	 * @param securityCode   - the cvv/cvc code of the credit card
 	 * @return {@link java.util.Map Map} represent the payment result with a
 	 *         message.
+	 *  nguyen duc thanh
 	 */
-	public Map<String, String> payOrder(int amount, String contents, String cardNumber, String cardHolderName,
+	public PaymentTransaction payOrder(int amount, String contents, String cardNumber, String cardHolderName,
 			String expirationDate, String securityCode) {
-		Map<String, String> result = new Hashtable<String, String>();
-		result.put("RESULT", "PAYMENT FAILED!");
+//		Map<String, String> result = new Hashtable<String, String>();
+//		result.put("RESULT", "PAYMENT FAILED!");
 		try {
 			this.card = new CreditCard(cardNumber, cardHolderName, Integer.parseInt(securityCode),
 					getExpirationDate(expirationDate));
 
 			this.interbank = new InterbankSubsystem();
 			PaymentTransaction transaction = interbank.payOrder(card, amount, contents);
+//			System.out.println("Paymentcontroller: " + transaction.toString());
 
-			result.put("RESULT", "PAYMENT SUCCESSFUL!");
-			result.put("MESSAGE", "You have succesffully paid the order!");
+			return transaction ;
+		
 		} catch (PaymentException | UnrecognizedException ex) {
-			result.put("MESSAGE", ex.getMessage());
+			return null;
 		}
-		return result;
+//		return result;
+	}
+	
+	/**
+	 * @param amount số lượng tiền hoàn lại cho khách hàng
+	 * @param contents nội dung hoàn lại tiền
+	 * @param cardNumber số thẻ của thuê bao hoàn lại
+	 * @param cardHolderName tên chủ thuê bao hoàn lại tiền
+	 * @param expirationDate ngày hết hạn của thẻ thuê bao
+	 * @param securityCode mã code của thẻ
+	 * @return
+	 */
+	public PaymentTransaction refund(int amount, String contents, String cardNumber, String cardHolderName,
+			String expirationDate, String securityCode) {
+//		Map<String, String> result = new Hashtable<String, String>();
+//		result.put("RESULT", "PAYMENT FAILED!");
+		try {
+			this.card = new CreditCard(cardNumber, cardHolderName, Integer.parseInt(securityCode),
+					getExpirationDate(expirationDate));
+
+			this.interbank = new InterbankSubsystem();
+			PaymentTransaction transaction = interbank.refund(card, amount, contents);
+
+			return transaction ;
+		
+		} catch (PaymentException | UnrecognizedException ex) {
+			return null;
+		}
+//		return result;
 	}
 
 	public void emptyCart(){

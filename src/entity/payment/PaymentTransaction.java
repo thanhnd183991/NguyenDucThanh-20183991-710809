@@ -2,13 +2,13 @@ package entity.payment;
 
 public class PaymentTransaction {
 	private String errorCode;
-	private CreditCard card;
+	private PaymentCard card;
 	private String transactionId;
 	private String transactionContent;
 	private int amount;
 	private String createdAt;
-	
-	public PaymentTransaction(String errorCode, CreditCard card, String transactionId, String transactionContent,
+
+	public PaymentTransaction(String errorCode, PaymentCard card, String transactionId, String transactionContent,
 			int amount, String createdAt) {
 		super();
 		this.errorCode = errorCode;
@@ -18,8 +18,24 @@ public class PaymentTransaction {
 		this.amount = amount;
 		this.createdAt = createdAt;
 	}
-	
+
 	public String getErrorCode() {
 		return errorCode;
 	}
+
+	@Override
+	public String toString() {
+		return "PaymentTransaction [errorCode=" + errorCode + ", card=" + card.toString() + ", transactionId="
+				+ transactionId + ", transactionContent=" + transactionContent + ", amount=" + amount + ", createdAt="
+				+ createdAt + "]";
+	}
+
+	public String getTransactionId() {
+		return transactionId;
+	}
+
+	public void setTransactionId(String transactionId) {
+		this.transactionId = transactionId;
+	}
+
 }

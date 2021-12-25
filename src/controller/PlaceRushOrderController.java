@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import calculateshippingfee.PlaceRushOrderShippingFeeCalculator;
 import entity.cart.Cart;
 import entity.cart.CartMedia;
 import common.exception.InvalidDeliveryInfoException;
@@ -118,19 +119,8 @@ public class PlaceRushOrderController extends PlaceOrderController {
 	 * @return shippingFee
 	 */
 	public int calculateShippingRushOrderFee(Order order) {
-		int totalNoRushOrder =  super.calculateShippingFee(order);
-		if(totalNoRushOrder == 0)
-			return 0;
+		PlaceRushOrderShippingFeeCalculator calculator = new PlaceRushOrderShippingFeeCalculator();
+		return calculator.calculateShippingFee(order);
 		
-		// tính tổng các mặt hàng được hỗ trợ giao nhanh
-		// mỗi mặt hàng gio nhanh tính thêm 10.000đ
-		int totalNumberOfItems = 0;
-		for(int i =0;i<order.getlstOrderMedia().size();i++) {
-			OrderMedia cartMedia = (OrderMedia)order.getlstOrderMedia().get(i);
-			if(cartMedia.getMedia().getIsSupport())
-				totalNumberOfItems += ((OrderMedia)order.getlstOrderMedia().get(i)).getQuantity();
-		}
-        LOGGER.info("Number Of Rush Order Items: " + totalNumberOfItems);
-		return totalNoRushOrder + totalNumberOfItems * 10000;
 	}
 }

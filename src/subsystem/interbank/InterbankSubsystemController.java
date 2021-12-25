@@ -11,6 +11,7 @@ import common.exception.NotEnoughTransactionInfoException;
 import common.exception.SuspiciousTransactionException;
 import common.exception.UnrecognizedException;
 import entity.payment.CreditCard;
+import entity.payment.PaymentCard;
 import entity.payment.PaymentTransaction;
 import utils.Configs;
 import utils.MyMap;
@@ -50,12 +51,13 @@ public class InterbankSubsystemController {
 		Map<String, Object> requestMap = new MyMap();
 		requestMap.put("version", VERSION);
 		requestMap.put("transaction", transaction);
-		System.out.println("requestMap"+ requestMap.toString());
+//		System.out.println("requestMap"+ requestMap.toString());
 		String responseText = interbankBoundary.query(Configs.PROCESS_TRANSACTION_URL, generateData(requestMap));
+//		System.out.println("responseText " + responseText);
 		MyMap response = null;
 		try {
 			response = MyMap.toMyMap(responseText, 0);
-			System.out.print("response" + response);
+//			System.out.print("response" + response);
 		} catch (IllegalArgumentException e) {
 			e.printStackTrace();
 			throw new UnrecognizedException();
@@ -73,7 +75,7 @@ public class InterbankSubsystemController {
 		PaymentTransaction trans = new PaymentTransaction((String) response.get("errorCode"), card,
 				(String) transcation.get("transactionId"), (String) transcation.get("transactionContent"),
 				Integer.parseInt((String) transcation.get("amount")), (String) transcation.get("createdAt"));
-		System.out.println("trans" + trans.toString());
+//		System.out.println("trans" + trans.toString());
 		switch (trans.getErrorCode()) {
 		case "00":
 			break;

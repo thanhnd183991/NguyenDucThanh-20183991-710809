@@ -139,12 +139,6 @@ public class Book extends Media {
     }
 
     @Override
-    public List getAllMedia() {
-        return null;
-    }
-
-
-    @Override
     public String toString() {
         return "{" +
             super.toString() +

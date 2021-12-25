@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Random;
 import java.util.logging.Logger;
 
+import calculateshippingfee.PlaceOrderShippingFeeCalculator;
+import calculateshippingfee.RandomShippingFeeCalculator;
+import calculateshippingfee.ShippingFeeCalculator;
 import entity.cart.Cart;
 import entity.cart.CartMedia;
 import common.exception.InvalidDeliveryInfoException;
@@ -26,7 +29,7 @@ public class PlaceOrderController extends BaseController{
      * Just for logging purpose
      */
     private static Logger LOGGER = utils.Utils.getLogger(PlaceOrderController.class.getName());
-
+    private ShippingFeeCalculator shippingFeeCalculator;
     /**
      * This method checks the avalibility of product when user click PlaceOrder button
      * @throws SQLException
@@ -41,15 +44,15 @@ public class PlaceOrderController extends BaseController{
      * @throws SQLException
      */
     public Order createOrder() throws SQLException{
-        Order order = new Order();
+    	List lstOrderMedia = new ArrayList();
         for (Object object : Cart.getCart().getListMedia()) {
             CartMedia cartMedia = (CartMedia) object;
             OrderMedia orderMedia = new OrderMedia(cartMedia.getMedia(), 
                                                    cartMedia.getQuantity(), 
                                                    cartMedia.getPrice());    
-            order.getlstOrderMedia().add(orderMedia);
+           lstOrderMedia.add(orderMedia);
         }
-        return order;
+        return new Order.OrderBuilder(lstOrderMedia).build();
     }
 
     /**
@@ -74,6 +77,7 @@ public class PlaceOrderController extends BaseController{
     }
     
     /**
+   * Nguyễn Đức Thành 20183991
    * The method validates the info
    * @param info
    * @throws InterruptedException
@@ -123,14 +127,9 @@ public class PlaceOrderController extends BaseController{
      * @return shippingFee
      */
     public int calculateShippingFee(Order order){
-        Random rand = new Random();
-        // neu don hang co gia tren 100.000đ thi free shipping
-        if(order.getAmount() > 100000)
-        	return 0;
-
-        // fake fees
-        int fees = (int)( ( (rand.nextFloat()*10)/100 ) * order.getAmount() ) + 1;
-        LOGGER.info("Order Amount: " + order.getAmount() + " -- Shipping Fees: " + fees);
+    	shippingFeeCalculator = new PlaceOrderShippingFeeCalculator();
+    	int fees = shippingFeeCalculator.calculateShippingFee(order);
+        LOGGER.info("DeliveryInfo: " + order.getDeliveryInfo().toString() + "Order Amount: " + order.getAmount() + " -- Shipping Fees: " + fees);
         return fees;
     }
 }

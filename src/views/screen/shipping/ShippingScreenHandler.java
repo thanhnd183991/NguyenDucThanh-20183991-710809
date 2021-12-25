@@ -77,7 +77,7 @@ public class ShippingScreenHandler extends BaseScreenHandler implements Initiali
 
 		// add info to messages
 		HashMap<String, String> messages = addInfoToMessages();
-			
+		
 		// process and validate delivery info
 		try {
 			getBController().processDeliveryInfo(messages);
@@ -106,9 +106,11 @@ public class ShippingScreenHandler extends BaseScreenHandler implements Initiali
 
 	public void calculateShippingFees(HashMap<String, String> messages) {
 		// calculate shipping fees
+		order.setDeliveryInfo(messages);
 		int shippingFees = getBController().calculateShippingFee(order);
 		order.setShippingFees(shippingFees);
-		order.setDeliveryInfo(messages);
+//		System.out.println("messages " + messages);
+//		System.out.println("order " + order);
 	}
 
 	public void createInvoiceScreen() throws IOException {
